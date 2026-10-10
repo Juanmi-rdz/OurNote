@@ -1,0 +1,28 @@
+name: IPA sin firmar
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx expo prebuild -p ios
+      - name: Compilar
+        working-directory: ios
+        run: |
+          xcodebuild -workspace OurNote.xcworkspace -scheme OurNote \
+            -configuration Release -sdk iphoneos -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - name: Empaquetar IPA
+        run: |
+          mkdir Payload
+          cp -R ios/build/Build/Products/Release-iphoneos/OurNote.app Payload/
+          zip -r OurNote.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OurNote-ipa
+          path: OurNote.ipa
