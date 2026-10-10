@@ -153,7 +153,7 @@ export function ProveedorTema({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       Appearance.setColorScheme(
-        preferencia === "sistema" ? null : preferencia === "oscuro" ? "dark" : "light"
+        preferencia === "sistema" ? "unspecified" : preferencia === "oscuro" ? "dark" : "light"
       );
     } catch {}
   }, [preferencia]);
